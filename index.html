@@ -12,6 +12,7 @@
     li { margin: 5px 0; display: flex; justify-content: space-between; align-items: center; }
     .remover { background: red; color: white; border: none; border-radius: 5px; padding: 3px 6px; cursor: pointer; }
     input { margin: 5px 0; padding: 5px; width: 250px; }
+    #total { font-weight: bold; margin-top: 10px; }
   </style>
 </head>
 <body>
@@ -20,6 +21,7 @@
 
   <h2>Carrinho</h2>
   <ul id="listaCarrinho"></ul>
+  <p id="total">Total: R$ 0,00</p>
 
   <h3>Identificação do Aluno</h3>
   <input type="text" id="nome" placeholder="Nome do aluno"><br>
@@ -27,7 +29,7 @@
   <input type="number" id="chamada" placeholder="Número da chamada">
 
   <br><br>
-  <button id="enviarPedido">Enviar Pedido</button>
+  <button id="pagarPedido">💳 Pagar e Confirmar Pedido</button>
 
   <script>
     const produtos = [
@@ -67,8 +69,11 @@
 
     function atualizarCarrinho() {
       const lista = document.getElementById('listaCarrinho');
+      const totalElem = document.getElementById('total');
       lista.innerHTML = '';
+      let total = 0;
       carrinho.forEach((item, index) => {
+        total += item.preco;
         const li = document.createElement('li');
         li.innerHTML = `
           ${item.nome} - R$ ${item.preco.toFixed(2)}
@@ -76,9 +81,10 @@
         `;
         lista.appendChild(li);
       });
+      totalElem.textContent = `Total: R$ ${total.toFixed(2)}`;
     }
 
-    document.getElementById('enviarPedido').addEventListener('click', () => {
+    document.getElementById('pagarPedido').addEventListener('click', () => {
       if (carrinho.length === 0) return alert('Seu carrinho está vazio!');
 
       const nome = document.getElementById('nome').value.trim();
@@ -86,7 +92,7 @@
       const chamada = document.getElementById('chamada').value.trim();
 
       if (!nome || !serie || !chamada) {
-        return alert('Preencha Nome, Série e Número da chamada antes de enviar!');
+        return alert('Preencha Nome, Série e Número da chamada antes de pagar!');
       }
 
       let agora = new Date();
@@ -100,8 +106,17 @@
       });
       mensagem += `\n*Total: R$ ${total.toFixed(2)}*`;
 
-      const url = `https://wa.me/5543996350864?text=${encodeURIComponent(mensagem)}`;
-      window.open(url, '_blank');
+      // 🔗 Seu link de pagamento (configure no Mercado Pago / PagSeguro)
+      const linkPagamento = "https://link.mercadopago.com.br/seu-link-aqui";
+
+      // Redireciona para o pagamento
+      alert(`Total: R$ ${total.toFixed(2)}\nVocê será redirecionado para o pagamento.`);
+      window.open(linkPagamento, '_blank');
+
+      // 👉 Depois do pagamento, configure no Mercado Pago/PagSeguro
+      // para redirecionar o cliente para este link de WhatsApp:
+      const linkWhatsapp = `https://wa.me/5543996350864?text=${encodeURIComponent(mensagem)}`;
+      console.log("Após pagamento, redirecionar para:", linkWhatsapp);
     });
 
     renderizarCardapio();
