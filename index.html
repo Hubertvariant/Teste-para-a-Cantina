@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cardápio</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 20px; }
+    .item { border: 1px solid #ccc; padding: 10px; margin: 10px 0; border-radius: 8px; }
+    button { padding: 5px 10px; margin-top: 5px; cursor: pointer; }
+    ul { list-style: none; padding: 0; }
+    li { margin: 5px 0; display: flex; justify-content: space-between; align-items: center; }
+    .remover { background: red; color: white; border: none; border-radius: 5px; padding: 3px 6px; cursor: pointer; }
+  </style>
+</head>
+<body>
+  <h1>Cardápio</h1>
+  <div id="cardapio"></div>
+
+  <h2>Carrinho</h2>
+  <ul id="listaCarrinho"></ul>
+
+  <h3>Seu nome:</h3>
+  <input type="text" id="nome" placeholder="Digite seu nome">
+
+  <br><br>
+  <button id="enviarPedido">Enviar Pedido</button>
+
+  <script>
+    const produtos = [
+      { nome: 'X-Salada', descricao: 'Hambúrguer, queijo, alface, tomate', preco: 18.00 },
+      { nome: 'X-Bacon', descricao: 'Hambúrguer, bacon, queijo, molho especial', preco: 20.00 },
+      { nome: 'Refrigerante Lata', descricao: 'Coca-Cola, Guaraná, Pepsi', preco: 5.00 },
+      { nome: 'Batata Frita', descricao: 'Porção individual', preco: 8.00 },
+    ];
+
+    const carrinho = [];
+
+    function renderizarCardapio() {
+      const container = document.getElementById('cardapio');
+      container.innerHTML = '';
+      produtos.forEach((item, index) => {
+        const div = document.createElement('div');
+        div.className = 'item';
+        div.innerHTML = `
+          <h3>${item.nome}</h3>
+          <p>${item.descricao}</p>
+          <p><strong>R$ ${item.preco.toFixed(2)}</strong></p>
+          <button onclick="adicionarCarrinho(${index})">Adicionar</button>
+        `;
+        container.appendChild(div);
+      });
+    }
+
+    function adicionarCarrinho(index) {
+      carrinho.push(produtos[index]);
+      atualizarCarrinho();
+    }
+
+    function removerCarrinho(index) {
+      carrinho.splice(index, 1); // remove 1 item na posição index
+      atualizarCarrinho();
+    }
+
+    function atualizarCarrinho() {
+      const lista = document.getElementById('listaCarrinho');
+      lista.innerHTML = '';
+      carrinho.forEach((item, index) => {
+        const li = document.createElement('li');
+        li.innerHTML = `
+          ${item.nome} - R$ ${item.preco.toFixed(2)}
+          <button class="remover" onclick="removerCarrinho(${index})">X</button>
+        `;
+        lista.appendChild(li);
+      });
+    }
+
+    document.getElementById('enviarPedido').addEventListener('click', () => {
+      if (carrinho.length === 0) return alert('Seu carrinho está vazio!');
+
+      const nome = document.getElementById('nome').value.trim();
+      if (!nome) return alert('Digite seu nome antes de enviar!');
+
+      let agora = new Date();
+      let data = `${agora.getDate()}/${agora.getMonth() + 1}/${agora.getFullYear()} às ${agora.getHours()}:${String(agora.getMinutes()).padStart(2,'0')}`;
+
+      let mensagem = `*Novo Pedido* \n👤 Cliente: ${nome}\n🕒 Data: ${data}\n\n*Itens:*\n`;
+      let total = 0;
+      carrinho.forEach(item => {
+        mensagem += `• ${item.nome} - R$ ${item.preco.toFixed(2)}\n`;
+        total += item.preco;
+      });
+      mensagem += `\n*Total: R$ ${total.toFixed(2)}*`;
+
+      const url = `https://wa.me/5543996350864?text=${encodeURIComponent(mensagem)}`;
+      window.open(url, '_blank');
+    });
+
+    renderizarCardapio();
+  </script>
+</body>
+</html>
