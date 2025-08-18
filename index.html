@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Cardápio</title>
+  <title>Cardápio Escolar</title>
   <style>
     body { font-family: Arial, sans-serif; margin: 20px; }
     .item { border: 1px solid #ccc; padding: 10px; margin: 10px 0; border-radius: 8px; }
@@ -11,17 +11,20 @@
     ul { list-style: none; padding: 0; }
     li { margin: 5px 0; display: flex; justify-content: space-between; align-items: center; }
     .remover { background: red; color: white; border: none; border-radius: 5px; padding: 3px 6px; cursor: pointer; }
+    input { margin: 5px 0; padding: 5px; width: 250px; }
   </style>
 </head>
 <body>
-  <h1>Cardápio</h1>
+  <h1>Cardápio da Cantina</h1>
   <div id="cardapio"></div>
 
   <h2>Carrinho</h2>
   <ul id="listaCarrinho"></ul>
 
-  <h3>Seu nome:</h3>
-  <input type="text" id="nome" placeholder="Digite seu nome">
+  <h3>Identificação do Aluno</h3>
+  <input type="text" id="nome" placeholder="Nome do aluno"><br>
+  <input type="text" id="serie" placeholder="Série/Turma (ex: 7ºA)"><br>
+  <input type="number" id="chamada" placeholder="Número da chamada">
 
   <br><br>
   <button id="enviarPedido">Enviar Pedido</button>
@@ -58,7 +61,7 @@
     }
 
     function removerCarrinho(index) {
-      carrinho.splice(index, 1); // remove 1 item na posição index
+      carrinho.splice(index, 1);
       atualizarCarrinho();
     }
 
@@ -79,12 +82,17 @@
       if (carrinho.length === 0) return alert('Seu carrinho está vazio!');
 
       const nome = document.getElementById('nome').value.trim();
-      if (!nome) return alert('Digite seu nome antes de enviar!');
+      const serie = document.getElementById('serie').value.trim();
+      const chamada = document.getElementById('chamada').value.trim();
+
+      if (!nome || !serie || !chamada) {
+        return alert('Preencha Nome, Série e Número da chamada antes de enviar!');
+      }
 
       let agora = new Date();
       let data = `${agora.getDate()}/${agora.getMonth() + 1}/${agora.getFullYear()} às ${agora.getHours()}:${String(agora.getMinutes()).padStart(2,'0')}`;
 
-      let mensagem = `*Novo Pedido* \n👤 Cliente: ${nome}\n🕒 Data: ${data}\n\n*Itens:*\n`;
+      let mensagem = `*Novo Pedido Escolar* \n👤 Aluno: ${nome}\n📚 Série: ${serie}\n#️⃣ Chamada: ${chamada}\n🕒 Data: ${data}\n\n*Itens:*\n`;
       let total = 0;
       carrinho.forEach(item => {
         mensagem += `• ${item.nome} - R$ ${item.preco.toFixed(2)}\n`;
