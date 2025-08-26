@@ -1,37 +1,39 @@
-<!DOCTYPE html>
-<html lang="pt-BR">
+<!DOCTYPE html> <!-- Define que o documento é HTML5 -->
+<html lang="pt-BR"> <!-- Define o idioma da página como português do Brasil -->
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Cardápio Escolar</title>
+  <meta charset="UTF-8"> <!-- Define a codificação de caracteres para UTF-8 -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"> <!-- Faz a página se adaptar a dispositivos móveis -->
+  <title>Cardápio Escolar</title> <!-- Título da aba do navegador -->
   <style>
-    body { font-family: Arial, sans-serif; margin: 20px; }
-    .item { border: 1px solid #ccc; padding: 10px; margin: 10px 0; border-radius: 8px; }
-    button { padding: 5px 10px; margin-top: 5px; cursor: pointer; }
-    ul { list-style: none; padding: 0; }
-    li { margin: 5px 0; display: flex; justify-content: space-between; align-items: center; }
-    .remover { background: red; color: white; border: none; border-radius: 5px; padding: 3px 6px; cursor: pointer; }
-    input { margin: 5px 0; padding: 5px; width: 250px; }
-    #total { font-weight: bold; margin-top: 10px; }
+    /* Estilos da página */
+    body { font-family: Arial, sans-serif; margin: 20px; } /* Define fonte e margem */
+    .item { border: 1px solid #ccc; padding: 10px; margin: 10px 0; border-radius: 8px; } /* Estilo dos blocos de produto */
+    button { padding: 5px 10px; margin-top: 5px; cursor: pointer; } /* Estilo dos botões */
+    ul { list-style: none; padding: 0; } /* Remove marcadores da lista */
+    li { margin: 5px 0; display: flex; justify-content: space-between; align-items: center; } /* Estilo dos itens do carrinho */
+    .remover { background: red; color: white; border: none; border-radius: 5px; padding: 3px 6px; cursor: pointer; } /* Botão de remover item */
+    input { margin: 5px 0; padding: 5px; width: 250px; } /* Estilo dos campos de texto */
+    #total { font-weight: bold; margin-top: 10px; } /* Estilo do total do carrinho */
   </style>
 </head>
 <body>
-  <h1>Cardápio da Cantina</h1>
-  <div id="cardapio"></div>
+  <h1>Cardápio da Cantina</h1> <!-- Título principal da página -->
+  <div id="cardapio"></div> <!-- Área onde os produtos serão exibidos -->
 
-  <h2>Carrinho</h2>
-  <ul id="listaCarrinho"></ul>
-  <p id="total">Total: R$ 0,00</p>
+  <h2>Carrinho</h2> <!-- Título da seção do carrinho -->
+  <ul id="listaCarrinho"></ul> <!-- Lista dos itens adicionados -->
+  <p id="total">Total: R$ 0,00</p> <!-- Valor total do carrinho -->
 
-  <h3>Identificação do Aluno</h3>
-  <input type="text" id="nome" placeholder="Nome do aluno"><br>
-  <input type="text" id="serie" placeholder="Série/Turma (ex: 7ºA)"><br>
-  <input type="number" id="chamada" placeholder="Número da chamada">
+  <h3>Identificação do Aluno</h3> <!-- Título da seção de dados do aluno -->
+  <input type="text" id="nome" placeholder="Nome do aluno"><br> <!-- Campo para nome -->
+  <input type="text" id="serie" placeholder="Série/Turma (ex: 7ºA)"><br> <!-- Campo para série -->
+  <input type="number" id="chamada" placeholder="Número da chamada"> <!-- Campo para número de chamada -->
 
   <br><br>
-  <button id="pagarPedido">💳 Pagar e Confirmar Pedido</button>
+  <button id="pagarPedido">💳 Pagar e Confirmar Pedido</button> <!-- Botão para finalizar o pedido -->
 
   <script>
+    // Lista de produtos disponíveis
     const produtos = [
       { nome: 'X-Salada', descricao: 'Hambúrguer, queijo, alface, tomate', preco: 18.00 },
       { nome: 'X-Bacon', descricao: 'Hambúrguer, bacon, queijo, molho especial', preco: 20.00 },
@@ -39,65 +41,79 @@
       { nome: 'Batata Frita', descricao: 'Porção individual', preco: 8.00 },
     ];
 
-    const carrinho = [];
+    const carrinho = []; // Carrinho começa vazio
 
+    // Função que mostra os produtos na tela
     function renderizarCardapio() {
-      const container = document.getElementById('cardapio');
-      container.innerHTML = '';
+      const container = document.getElementById('cardapio'); // Pega o elemento onde os produtos serão exibidos
+      container.innerHTML = ''; // Limpa o conteúdo anterior
+
+      // Para cada produto, cria um bloco com botão de adicionar
       produtos.forEach((item, index) => {
-        const div = document.createElement('div');
-        div.className = 'item';
+        const div = document.createElement('div'); // Cria uma div para o produto
+        div.className = 'item'; // Adiciona a classe de estilo
         div.innerHTML = `
           <h3>${item.nome}</h3>
           <p>${item.descricao}</p>
           <p><strong>R$ ${item.preco.toFixed(2)}</strong></p>
           <button onclick="adicionarCarrinho(${index})">Adicionar</button>
         `;
-        container.appendChild(div);
+        container.appendChild(div); // Adiciona a div ao container
       });
     }
 
+    // Função que adiciona um item ao carrinho
     function adicionarCarrinho(index) {
-      carrinho.push(produtos[index]);
-      atualizarCarrinho();
+      carrinho.push(produtos[index]); // Adiciona o produto ao carrinho
+      atualizarCarrinho(); // Atualiza a exibição do carrinho
     }
 
+    // Função que remove um item do carrinho
     function removerCarrinho(index) {
-      carrinho.splice(index, 1);
-      atualizarCarrinho();
+      carrinho.splice(index, 1); // Remove o item pelo índice
+      atualizarCarrinho(); // Atualiza a exibição do carrinho
     }
 
+    // Função que atualiza a lista do carrinho e o total
     function atualizarCarrinho() {
-      const lista = document.getElementById('listaCarrinho');
-      const totalElem = document.getElementById('total');
-      lista.innerHTML = '';
-      let total = 0;
+      const lista = document.getElementById('listaCarrinho'); // Pega a lista do carrinho
+      const totalElem = document.getElementById('total'); // Pega o elemento do total
+      lista.innerHTML = ''; // Limpa a lista
+      let total = 0; // Começa o total em zero
+
+      // Para cada item no carrinho, mostra na lista e soma o preço
       carrinho.forEach((item, index) => {
-        total += item.preco;
-        const li = document.createElement('li');
+        total += item.preco; // Soma o preço ao total
+        const li = document.createElement('li'); // Cria um item de lista
         li.innerHTML = `
           ${item.nome} - R$ ${item.preco.toFixed(2)}
           <button class="remover" onclick="removerCarrinho(${index})">X</button>
         `;
-        lista.appendChild(li);
+        lista.appendChild(li); // Adiciona o item à lista
       });
-      totalElem.textContent = `Total: R$ ${total.toFixed(2)}`;
+
+      totalElem.textContent = `Total: R$ ${total.toFixed(2)}`; // Atualiza o valor total
     }
 
+    // Quando clicar no botão de pagar
     document.getElementById('pagarPedido').addEventListener('click', () => {
-      if (carrinho.length === 0) return alert('Seu carrinho está vazio!');
+      if (carrinho.length === 0) return alert('Seu carrinho está vazio!'); // Se o carrinho estiver vazio, mostra alerta
 
+      // Pega os dados do aluno
       const nome = document.getElementById('nome').value.trim();
       const serie = document.getElementById('serie').value.trim();
       const chamada = document.getElementById('chamada').value.trim();
 
+      // Se faltar algum dado, mostra alerta
       if (!nome || !serie || !chamada) {
         return alert('Preencha Nome, Série e Número da chamada antes de pagar!');
       }
 
+      // Pega a data e hora atual
       let agora = new Date();
       let data = `${agora.getDate()}/${agora.getMonth() + 1}/${agora.getFullYear()} às ${agora.getHours()}:${String(agora.getMinutes()).padStart(2,'0')}`;
 
+      // Monta a mensagem com os dados do pedido
       let mensagem = `*Novo Pedido Escolar* \n👤 Aluno: ${nome}\n📚 Série: ${serie}\n#️⃣ Chamada: ${chamada}\n🕒 Data: ${data}\n\n*Itens:*\n`;
       let total = 0;
       carrinho.forEach(item => {
@@ -106,20 +122,19 @@
       });
       mensagem += `\n*Total: R$ ${total.toFixed(2)}*`;
 
-      // 🔗 Seu link de pagamento (configure no Mercado Pago / PagSeguro)
+      // Link para pagamento (precisa configurar)
       const linkPagamento = "https://link.mercadopago.com.br/seu-link-aqui";
 
-      // Redireciona para o pagamento
+      // Mostra alerta com o total e abre o link de pagamento
       alert(`Total: R$ ${total.toFixed(2)}\nVocê será redirecionado para o pagamento.`);
       window.open(linkPagamento, '_blank');
 
-      // 👉 Depois do pagamento, configure no Mercado Pago/PagSeguro
-      // para redirecionar o cliente para este link de WhatsApp:
+      // Cria link para enviar pedido via WhatsApp
       const linkWhatsapp = `https://wa.me/5543996350864?text=${encodeURIComponent(mensagem)}`;
-      console.log("Após pagamento, redirecionar para:", linkWhatsapp);
+      console.log("Após pagamento, redirecionar para:", linkWhatsapp); // Mostra o link no console
     });
 
-    renderizarCardapio();
+    renderizarCardapio(); // Mostra os produtos ao carregar a página
   </script>
 </body>
 </html>
